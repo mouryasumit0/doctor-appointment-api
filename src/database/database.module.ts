@@ -16,12 +16,13 @@ import { Appointment } from '../appointment/entities/appointment.entity';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_NAME'),
+        synchronize: false,
+        dropSchema: false,
         entities: [User, Doctor, Appointment],
-        synchronize: configService.get('NODE_ENV') === 'development',
         // logging: configService.get('NODE_ENV') === 'development',
       }),
       inject: [ConfigService],
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }

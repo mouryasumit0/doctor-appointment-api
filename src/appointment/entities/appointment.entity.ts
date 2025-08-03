@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../user/entities/user.entity';
 import { Doctor } from '../../doctor/entities/doctor.entity';
-import { AppointmentStatus } from 'src/lib/enums/appointment-status.enum';
+import { AppointmentStatus } from '../../lib/enums/appointment-status.enum';
 
 @Entity('appointments')
 export class Appointment {

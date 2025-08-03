@@ -1,4 +1,4 @@
-import { Role } from 'src/lib/enums/role.enum';
+import { Role } from '../../lib/enums/role.enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
