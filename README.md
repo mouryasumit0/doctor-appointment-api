@@ -73,8 +73,26 @@ The server will start on `http://localhost:3000`
 
 ### Database Setup
 
-The application uses TypeORM with synchronization enabled in development mode, so tables will be created automatically.
+Ensure PostgreSQL is running and create the database:
+```bash
+psql -U postgres -c "CREATE DATABASE doctor_booking;"
+```
+#### Migrations
+Make sure TypeORM is installed globally:
+```bash
+npm install -g typeorm
+```
+Then, generate the initial migration:
+```bash
+npm run typeorm:migration:generate
+```
+This will create a migration file in the `src/migrations` directory.
 
+Run TypeORM migrations to set up the database schema:
+```bash
+npm run typeorm:migration:run
+```
+#### Seeding Sample Data
 To populate the database with sample data:
 ```bash
 npm run seed
