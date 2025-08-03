@@ -1,72 +1,243 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# 🩺 Doctor Appointment Booking System - NestJS Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive backend system for managing doctor appointments built with NestJS, TypeORM, and PostgreSQL. Features JWT authentication, role-based access control, and real-time appointment management.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+- **Authentication & Authorization**
+  - JWT-based authentication
+  - Role-based access control (PATIENT, DOCTOR)
+  - Secure password hashing with bcrypt
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **Doctor Management**
+  - Doctor listing with pagination
+  - Filter by specialization
+  - Available time slots management
+  - Customizable slot duration per doctor
 
-## Installation
+- **Appointment System**
+  - Book appointments with conflict detection
+  - View patient/doctor appointments
+  - Appointment status management
+  - Time slot validation
 
+- **API Documentation**
+  - Comprehensive Swagger documentation
+  - Input validation with DTOs
+  - Proper error handling
+
+## 🛠️ Tech Stack
+
+- **Backend**: NestJS + TypeScript
+- **Database**: PostgreSQL
+- **ORM**: TypeORM
+- **Authentication**: JWT + Passport
+- **Documentation**: Swagger
+- **Validation**: class-validator
+
+## 🚦 Getting Started
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- PostgreSQL database
+- npm or yarn
+
+### Installation
+
+1. **Install dependencies**
 ```bash
-$ npm install
+npm install
 ```
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+2. **Configure environment variables**
+Update the `.env` file with your database credentials:
+```env
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/doctor_booking
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=doctor_booking
+JWT_SECRET=your-super-secret-jwt-key
+JWT_EXPIRES_IN=7d
+PORT=3000
 ```
 
-## Test
-
+3. **Start the application**
 ```bash
-# unit tests
-$ npm run test
+npm run start:dev
+```
 
-# e2e tests
-$ npm run test:e2e
+The server will start on `http://localhost:3000`
 
-# test coverage
-$ npm run test:cov
+### Database Setup
+
+The application uses TypeORM with synchronization enabled in development mode, so tables will be created automatically.
+
+To populate the database with sample data:
+```bash
+npm run seed
+```
+
+This creates:
+- Sample patient user: `alice@example.com / password123`
+- Sample doctors with different specializations
+- Default login: `john.smith@hospital.com / password123`
+
+## 📚 API Documentation
+
+Once the server is running, visit:
+- **Swagger UI**: http://localhost:3000/api
+
+### Authentication Endpoints
+
+#### Register User
+```http
+POST /auth/register
+Content-Type: application/json
+
+{
+  "name": "Alice Johnson",
+  "email": "alice@example.com",
+  "password": "password123",
+  "role": "PATIENT"
+}
+```
+
+#### Login
+```http
+POST /auth/login
+Content-Type: application/json
+
+{
+  "email": "alice@example.com",
+  "password": "password123"
+}
+```
+
+### Doctor Endpoints
+
+#### Get All Doctors
+```http
+GET /doctors?page=1&limit=10&specialization=Dermatologist
+```
+
+#### Get Available Slots
+```http
+GET /doctors/{doctorId}/slots?date=2025-01-15
+```
+
+### Appointment Endpoints (Requires Authentication)
+
+#### Book Appointment (Patient Only)
+```http
+POST /appointments
+Authorization: Bearer {jwt_token}
+Content-Type: application/json
+
+{
+  "doctorId": "doctor-uuid",
+  "date": "2025-01-15",
+  "time": "10:30"
+}
+```
+
+#### Get My Appointments (Patient Only)
+```http
+GET /appointments/me
+Authorization: Bearer {jwt_token}
+```
+
+#### Get Doctor Appointments (Doctor Only)
+```http
+GET /appointments/doctor/{doctorId}
+Authorization: Bearer {jwt_token}
+```
+
+## 🏗️ Project Structure
+
+```
+src/
+├── auth/                   # Authentication module
+│   ├── dto/               # Data transfer objects
+│   ├── strategies/        # Passport strategies
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   └── auth.module.ts
+├── user/                  # User management
+│   ├── entities/
+│   ├── user.service.ts
+│   └── user.module.ts
+├── doctor/                # Doctor management
+│   ├── entities/
+│   ├── dto/
+│   ├── doctor.controller.ts
+│   ├── doctor.service.ts
+│   └── doctor.module.ts
+├── appointment/           # Appointment management
+│   ├── entities/
+│   ├── dto/
+│   ├── appointment.controller.ts
+│   ├── appointment.service.ts
+│   └── appointment.module.ts
+├── common/                # Shared utilities
+│   ├── decorators/
+│   ├── guards/
+│   └── enums/
+├── database/              # Database configuration
+│   ├── database.module.ts
+│   └── seed.ts
+└── main.ts               # Application entry point
+```
+
+## 📊 Database Schema
+
+### Users Table
+- `id`: UUID (Primary Key)
+- `name`: String
+- `email`: String (Unique)
+- `passwordHash`: String
+- `role`: Enum (PATIENT, DOCTOR)
+- `createdAt`: Timestamp
+
+### Doctors Table
+- `id`: UUID (Primary Key)
+- `userId`: UUID (Foreign Key to Users)
+- `specialization`: String
+- `availableFrom`: Time
+- `availableTo`: Time
+- `slotDuration`: Number (minutes)
+
+### Appointments Table
+- `id`: UUID (Primary Key)
+- `doctorId`: UUID (Foreign Key to Doctors)
+- `userId`: UUID (Foreign Key to Users)
+- `startTime`: Timestamp
+- `endTime`: Timestamp
+- `status`: Enum (BOOKED, CANCELLED, COMPLETED)
+
+## 🔒 Business Rules
+
+- No overlapping appointments for the same doctor
+- Appointments must be within doctor's availability hours
+- Only authenticated patients can book appointments
+- Doctors can only view their own appointments
+- Slot duration is enforced per doctor configuration
+
+
+## 🚀 Production Deployment
+
+1. Set `NODE_ENV=production`
+2. Use a secure JWT secret
+3. Configure proper database credentials
+4. Disable TypeORM synchronization
+5. Run database migrations if needed
 ```
 
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 
